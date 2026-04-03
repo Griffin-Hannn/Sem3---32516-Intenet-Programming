@@ -1,0 +1,118 @@
+/* Body Styling */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #e0f7ff;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  padding: 30px 15px;
+  box-sizing: border-box;
+}
+
+/* Main Container */
+.todo-container {
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Header Style */
+h2 {
+  text-align: center;
+  color: #1a8cff;
+  margin-bottom: 20px;
+}
+
+/* Input + Button */
+input[type="text"] {
+  width: 66%;
+  padding: 10px;
+  border: 1px solid #b3e0ff;
+  border-radius: 6px;
+  margin-right: 5px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+button.add-btn {
+  background-color: #1a8cff;
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+/* Task List */
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+li {
+  background: #f0faff;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Done task styling */
+li.done {
+  text-decoration: line-through;
+  background-color: #d0f0e0;
+  color: gray;
+}
+
+/* Action buttons (done/delete) */
+.actions button {
+  background-color: #b3e5ff;
+  border: none;
+  margin-left: 5px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.actions button:hover {
+  background-color: #81d4fa;
+}
+
+/* RESPONSIVE: Stack inputs on small screens */
+@media (max-width: 480px) {
+  .todo-container {
+    padding: 20px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  button.add-btn {
+    width: 100%;
+  }
+
+  li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+}

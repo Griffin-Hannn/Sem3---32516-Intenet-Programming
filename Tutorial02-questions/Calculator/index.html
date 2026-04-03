@@ -1,0 +1,55 @@
+<!-- Program to build Simple Calculator in JavaScript using HTML and CSS. -->
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+  <title> JavaScript Calculator </title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+  <h1> JavaScript Simple Calculator by WsCube Tech </h1>
+  <div class="formstyle">
+    <form name="form1">
+
+      <!-- This input box shows the button pressed by the user in calculator. -->
+      <input id="calc" type="text" name="answer"> <br> <br>
+
+      <!-- onclick() function displays the number pressed by the user. -->
+      <input type="button" value="1" onclick="form1.answer.value += '1' ">
+      <input type="button" value="2" onclick="form1.answer.value += '2' ">
+      <input type="button" value="3" onclick="form1.answer.value += '3' ">
+      <input type="button" value="+" onclick="form1.answer.value += '+' ">
+      <br> <br>
+
+      <!-- Follow the above example to add the 2nd row of buttons. -->
+      <input type="button" value="4" onclick="form1.answer.value += '4' ">
+      <input type="button" value="5" onclick="form1.answer.value += '5' ">
+      <input type="button" value="6" onclick="form1.answer.value += '6' ">
+      <input type="button" value="-" onclick="form1.answer.value += '-' ">
+      <br> <br>
+
+      <!-- Follow the above example to add the 3rd row of buttons. -->
+      <input type="button" value="7" onclick="form1.answer.value += '7' ">
+      <input type="button" value="8" onclick="form1.answer.value += '8' ">
+      <input type="button" value="9" onclick="form1.answer.value += '9' ">
+      <input type="button" value="*" onclick="form1.answer.value += '*' ">
+
+      <br> <br>
+
+      <!-- Follow the above example to add the 4th row of buttons. -->
+      <input type="button" value="/" onclick="form1.answer.value += '/' ">
+      <input type="button" value="0" onclick="form1.answer.value += '0' ">
+      <input type="button" value="." onclick="form1.answer.value += '.' ">
+      <!-- The last (rightmost) button is special: When we click on the '=' button, the onclick() should show the sum results on the calculator screen. -->
+      <input type="button" value="=" onclick="form1.answer.value = eval(form1.answer.value) " id="equal">
+      <br>
+      <!-- Display the Cancel button and erase all data entered by the user. -->
+      <input type="button" value="Clear All" onclick="form1.answer.value = '' " id="clear">
+      <br>
+
+    </form>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+/* Content area */
+body {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+/* Headings and text */
+h1 {
+  color: blueviolet;
+}
+
+h2 {
+  color: blueviolet;
+}
+
+h1,
+h2 {
+  
+}
+
+* {
+  box-sizing: border-box;
+}
+
+p {
+  color: grey;
+}
+
+/* Form structure */
+
+fieldset {
+  border: none;
+  padding: 0;
+}
+
+legend {
+  font-weight: bold;
+  padding-bottom: 10px;
+}
+
+fieldset,
+.separator {
+  margin-bottom: 10px;
+}
+
+.form-section {
+  
+}
+
+img {
+  
+}
+
+/* Individual form items */
+
+fieldset input {
+  margin: 0 10px 0 0;
+}
+
+label {
+  margin-right: 40px;
+}
+
+textarea {
+  margin-top: 10px;
+  padding: 20px;
+  width: 100%;
+  height: 200px;
+}
+
+.separator {
+  
+}
+
+.separator label {
+
+}
+
+.separator input,
+.separator select {
+  
+}
+
+button {
+  
+}
+
+button:hover,
+button:focus {
+  
+}
