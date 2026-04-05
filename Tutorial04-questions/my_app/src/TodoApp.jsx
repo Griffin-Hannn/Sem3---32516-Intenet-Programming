@@ -1,27 +1,43 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 /* We import several icons (Trash2, Plus, Check, X, Edit2) from the lucide-react library to use in our TodoApp component for adding, editing, and deleting tasks. */
-import { Trash2, Plus, Check, X, Edit2 } from 'lucide-react';
+import { Trash2, Plus, Check, X, Edit2, CheckCheck } from 'lucide-react';
 import './TodoApp.css';
 
 export default function TodoApp() {
   /* The todos state holds an array of todo objects, each with an id, text, and completed status. */
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem('todo_storage_key');
+    return saved ? JSON.parse(saved) : [];
+  });
   /* The input state manages the current value of the input field for adding new tasks. */
   const [input, setInput] = useState('');
   /* The editingId state tracks which todo is currently being edited, while editText holds the text for the todo being edited. */
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
+  const inputRef = useRef(null); // To focus the main input after actions
+
+  useEffect(() => {
+    localStorage.setItem('todo_storage_key', JSON.stringify(todos));
+    const pendingCount = todos.filter(t => !t.completed).length;
+    document.title = `Tasks (${pendingCount} pending)`;
+  }, [todos]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const addTodo = () => {
     if (input.trim()) {
       /* adding a new todo to the list by creating a new object with a unique id, the input text, and a completed status of false. */
-      setTodos([...todos, {
+      const newTodo = {
         id: Date.now(),
         text: input.trim(),
         completed: false
-      }]);
+      };
+      setTodos(todos => [newTodo, ...todos]);
       /* clears the input field after adding a new todo. */
       setInput('');
+      inputRef.current?.focus();
     }
   };
 
@@ -56,8 +72,10 @@ export default function TodoApp() {
       /* clears the editing state by resetting editingId and editText, allowing the user to start editing another todo or add new todos. */
       setEditingId(null);
       setEditText('');
-    }
-  };
+    } else {
+      window.confirm('Edit text cannot be empty.')
+      }
+    };
 
   const cancelEdit = () => {
     setEditingId(null);
@@ -76,6 +94,7 @@ export default function TodoApp() {
           <input
             type="text"
             value={input}
+            ref={inputRef}
             /* Updates the input state with the current value of the input field whenever the user types something. Don't bother defining this function separately since it's a simple state update. */
             onChange={(e) => setInput(e.target.value)}
             /* Allows the user to add a new todo by pressing the Enter key while focused on the input field. If the Enter key is pressed, the addTodo function is called to add the new task to the list. */
@@ -96,6 +115,7 @@ export default function TodoApp() {
           {todos.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">📝</div>
+              <CheckCheck size={48} />
               <p>No tasks yet. Add one above!</p>
             </div>
           ) : (
@@ -136,7 +156,7 @@ export default function TodoApp() {
                         disabled={editingId !== null}
                       >
                         {/* The check icon shows differently based on whether the todo is completed or not. */}
-                        {todo.completed && <Check size={16} className="check-icon" />}
+                        {todo.completed ? <Check size={16} className="check-icon" /> : null}
                       </button>
                       {/* Applies an extra CSS class to the todo text for the completed items. */}
                       <span className={`todo-text ${todo.completed ? 'todo-completed' : ''} ${editingId !== null ? 'disabled' : ''}`}>
