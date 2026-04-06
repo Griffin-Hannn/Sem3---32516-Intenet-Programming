@@ -2,61 +2,108 @@ import { useState, useEffect, useRef } from 'react';
 import { Trash2, Plus, Check, X, Edit2 } from 'lucide-react';
 import './TodoApp.css';
 
-export default function TodoApp() {
-  // --- STATE INITIALIZATION ---
-  // Lazy initializer: Runs once on mount to pull saved data
-  const [todos, setTodos] = useState(() => {
-    const saved = localStorage.getItem('todo_storage_key');
-    // initilize with the stored to-dos in localStorage if it is not empty
-    return saved ? JSON.parse(saved) : [];
-  });
+const API_BASE_URL = 'http://127.0.0.1:8000/todos';
 
+export default function TodoApp() {
+  const [todos, setTodos] = useState([]);
   const [input, setInput] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
 
-  // --- REFS FOR User Experience ---
-  const inputRef = useRef(null); // To focus the main input after actions
+  const inputRef = useRef(null);
 
-  // --- EFFECTS ---
-  // Save to LocalStorage whenever 'todos' changes
+  // A useEffect with an empty dependency array ([]) will not run after a re-render.
+  // It only runs once, after the initial render of the component (mounting).
   useEffect(() => {
-    // Save todos using the same key that we use to read from localStorage
-    localStorage.setItem('todo_storage_key', JSON.stringify(todos));
-    // Show the number of pending (uncompleted) tasks in the broswer tab title.
-    const pendingCount = todos.filter((t) => !t.completed).length;
+    fetchTodos(); // fetch todos from the backend API
+    inputRef.current?.focus(); // initially, focus on the input field
+  }, []);
+
+  // update the pending task number whenever the todos state changes
+  useEffect(() => {
+    const pendingCount = todos.filter(t => !t.completed).length;
     document.title = `Tasks (${pendingCount} pending)`;
   }, [todos]);
 
-  // Focus the input field on initial mount for better user experience
-  useEffect(() => {
-    // Attempts to set the keyboard focus on an HTML input element if that element currently exists.
-    // Using '?' allows us to safely handle cases where the input element is not yet available.
-    inputRef.current?.focus();
-  }, []);
+  // Fetch todos from backend upon initialization and after any changes to the todos state
+  const fetchTodos = async () => {
+    try {
+      const response = await fetch(API_BASE_URL);
+      const data = await response.json();
+      setTodos(data);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
 
-  const addTodo = () => {
+  const addTodo = async () => {
     if (input.trim()) {
-      setTodos([...todos, {
-        id: Date.now(),
-        text: input.trim(),
-        completed: false
-      }]);
+      try {
+        // Instead of reading from localStorage, we are fetch todos from a backend endpoint.
+        const response = await fetch(API_BASE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', // must specify the data type
+          },
+          body: JSON.stringify({
+            id: Date.now(), // the Date.now() fucntion returns a number, which is aligned to the int type in Python.
+            text: input.trim(),
+            completed: false,
+          }),
+        });
+        if (response.ok) {
+          fetchTodos(); // actively fetch latest todos from endpoint to ensure the rendered data sync with backend.
+        }
+      } catch (error) {
+        alert("Error saving a new todo.");
+        alert(error);
+      }
+
       setInput('');
       inputRef.current?.focus(); // keep focus after adding
     }
   };
 
-  const toggleTodo = (id) => {
-    setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+  const toggleTodo = async (id) => {
+    // find this todo item by its id
+    const todoToToggle = todos.find(todo => todo.id === id);
+    // if an item is not found with this id, the return would be an undefined, and we can skip any further action.
+    if (todoToToggle !== undefined) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...todoToToggle, // use the spread operator to get all the property:value pairs inside the object
+            completed: !todoToToggle.completed, // update the complted propoerty with the opposite value
+          }),
+        });
+        if (response.ok) {
+          fetchTodos(); // fetch from backend to make sure latest todos are rendered.
+        }
+      } catch (error) {
+        alert("Error toggleing a todo's completed status.");
+      }
+    }
   };
 
-  const deleteTodo = (id) => {
+  const deleteTodo = async (id) => {
     const todoToDelete = todos.find(todo => todo.id === id);
     if (window.confirm(`Are you sure you want to delete "${todoToDelete.text}"?`)) {
-      setTodos(todos.filter(todo => todo.id !== id));
+      if (todoToDelete !== undefined) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/${id}`, {
+            method: 'DELETE'
+          });
+          if (response.ok) {
+            fetchTodos();
+          }
+        } catch (error) {
+          alert("Error deleting a todo.");
+        }
+      }
     }
   };
 
@@ -65,13 +112,30 @@ export default function TodoApp() {
     setEditText(todo.text);
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (editText.trim()) {
-      setTodos(todos.map(todo =>
-        todo.id === editingId ? { ...todo, text: editText.trim() } : todo
-      ));
-      setEditingId(null);
-      setEditText('');
+      const todoToEdit = todos.find(todo => todo.id === editingId);
+      if (todoToEdit !== undefined) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/${editingId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              ...todoToEdit,
+              text: editText.trim(), // create a new todo object with updated value on the 'text' property.
+            }),
+          });
+          if (response.ok) {
+            fetchTodos();
+            cancelEdit(); // end the editing status for the web page upon done editing
+          }
+        } catch (error) {
+          alert("Error toggleing a todo's completed status.");
+          alert(error);
+        }
+      }
     }
   };
 

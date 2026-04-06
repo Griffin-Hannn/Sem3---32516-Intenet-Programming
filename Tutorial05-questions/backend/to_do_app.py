@@ -6,9 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(title="Simple To-Do API")
 
 # Define the origins that are allowed to talk to your server
-# changes for commit 2
-# changes for commit 3
-# chagnes for commit 4
 origins = [
     "http://localhost:3000",  # Default React port
     "http://127.0.0.1:3000",
