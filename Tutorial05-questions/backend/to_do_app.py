@@ -40,6 +40,7 @@ todo_db = []
 async def get_all_todos():
     """Fetch the entire to-do list."""
     # Add your code here...
+    return todo_db
 
 
 @app.post("/todos", response_model=TodoItem)
@@ -48,15 +49,32 @@ async def create_todo(item: TodoItem):
     # First check if the ID already exists in your 'database'
     # If not, add the item to your 'database'
     # optionally, return the newly added item back to client.
-
+    if any(x.id == item.id for x in todo_db):
+        raise HTTPException(status_code=400, detail="ID already exists")
+    todo_db.append(item)
+    return item
 
 @app.put("/todos/{todo_id}", response_model=TodoItem)
 async def update_todo(todo_id: int, updated_item: TodoItem):
     """Update an existing task by its ID."""
     # Add your code here...
+    if todo_id != updated_item.id:
+        raise HTTPException(status_code=400, detail="ID not match")
 
+    for index, item in enumerate(todo_db):
+        if item.id == todo_id:
+            todo_db[index] = updated_item
+            return updated_item
+        
+    raise HTTPException(status_code=404, detail="Item not found")
+        
 
 @app.delete("/todos/{todo_id}")
 async def delete_todo(todo_id: int):
     """Remove a task from the list."""
     # Add your code here...
+    for index, item in enumerate(todo_db):
+        if item.id == todo_id:
+            todo_db.pop(index)
+            return {"message": f"Task {todo_id} deleted successfully"}
+    raise HTTPException(status_code=404, detail="Task not found")
