@@ -45,18 +45,18 @@ async def db_create_todo(session: Session, todo_create: Todo) -> Todo:
     return new_todo
 
 # # the get_todo endpoint calls this function to fetch a record by its id field
-async def db_get_todo(session: Session, todo_id: int) -> Optional[Todo]:
+async def db_get_todo(session: Session, todo_id: str) -> Optional[Todo]:
     # # Write your code here
     return session.get(Todo, todo_id)
 
 # # the get_all_todos endpoint calls this function to fetch multiple records (limited to 100 recrods per fetch)
 async def db_get_todos(session: Session, skip: int = 0, limit: int = 100) -> List[Todo]:
     # # Write your code here
-    statement = select(Todo).offset(skip).limit(limit)
+    statement = select(Todo).order_by(Todo.id.desc()).offset(skip).limit(limit)
     return session.exec(statement).all()
 
 # # the update_todo endpoint calls this function to update a record
-async def db_update_todo(session: Session, todo_id: int, todo_update: Todo) -> Optional[Todo]:
+async def db_update_todo(session: Session, todo_id: str, todo_update: Todo) -> Optional[Todo]:
     todo = await db_get_todo(session, todo_id)
     if not todo:
         return None
@@ -70,9 +70,9 @@ async def db_update_todo(session: Session, todo_id: int, todo_update: Todo) -> O
     # # Write your code here
 
 # # the delete_todo endpoint calls this function to delete a record by its id field
-async def db_delete_todo(session: Session, todo_id: int) -> bool:
+async def db_delete_todo(session: Session, todo_id: str) -> bool:
     # # Write your code here
-    todo = await db_create_todo(session, todo_id)
+    todo = await db_get_todo(session, todo_id)
     if not todo:
         return False
     session.delete(todo)
