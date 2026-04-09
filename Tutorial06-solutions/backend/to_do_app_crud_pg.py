@@ -50,9 +50,7 @@ async def db_get_todos(session: Session, skip: int = 0, limit: int = 100) -> Lis
 
 
 # # the update_todo endpoint calls this function to update a record
-async def db_update_todo(
-    session: Session, todo_id: int, todo_update: Todo
-) -> Optional[Todo]:
+async def db_update_todo(session: Session, todo_id: int, todo_update: Todo) -> Optional[Todo]:
     todo = await db_get_todo(session, todo_id)
     if not todo:
         return None

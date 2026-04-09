@@ -10,6 +10,7 @@ __pycache__/
 
 # macOS
 .DS_Store
+**/.DS_Store
 
 # Node (如果你有 frontend)
 node_modules/
