@@ -1,27 +1,17 @@
 from sqlmodel import Field, SQLModel, Session, create_engine, select
 from typing import List, Optional
-from urllib.parse import quote_plus
 
 # Establish a db connection
-username = "pgadmin@pg-uts-32516-griffin"
+username = "pgadmin"
 password = "Pg25959281"
 database_name = "postgres"
-
-# Azure PostgreSQL requires the server endpoint, PostgreSQL driver, and SSL.
-encoded_username = quote_plus(username)
-encoded_password = quote_plus(password)
-DATABASE_URL = (
-    f"postgresql+psycopg2://{encoded_username}:{encoded_password}"
-    f"@pg-uts-32516-griffin.postgres.database.azure.com:5432/{database_name}"
-    f"?sslmode=require"
-)
+DATABASE_URL = f"postgresql+psycopg2://{username}:{password}@pg-uts-32516-griffin.postgres.database.azure.com:5432/{database_name}?sslmode=require"
 engine = create_engine(DATABASE_URL, echo=True)
 
 
 # Create a database table "todo"
 class Todo(SQLModel, table=True):
-    # Keep the id field as str type so it remains compatible with the existing app payload
-    # and PostgreSQL table design.
+    # Change the id field to str type becuase PostgreSQL table design here uses a string id for compatibility with the app
     id: str = Field(max_length=25, primary_key=True)
     text: str = Field(max_length=256)
     completed: bool = False
